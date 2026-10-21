@@ -1,13 +1,13 @@
 // Grok Dr. Vic: The Lost Lab - boot, app state, main loop (Shadowlight engine on the Turbo core).
-import { E, initEngine, render, trackFps } from './engine.js?v=vic1';
-import { initMats } from './mats.js?v=vic1';
-import { initInput, clearEdges, edge } from './input.js?v=vic1';
-import { initAudio, setSound, sfx } from './audio.js?v=vic1';
-import { S, persist } from './save.js?v=vic1';
-import { UI, HUD } from './ui.js?v=vic1';
-import { closePanel, talk } from './uikit.js?v=vic1';
-import { Game } from './game.js?v=vic1';
-import { loadFont } from './text3d.js?v=vic1';
+import { E, initEngine, render, trackFps } from './engine.js?v=vic2live';
+import { initMats } from './mats.js?v=vic2live';
+import { initInput, clearEdges, edge } from './input.js?v=vic2live';
+import { initAudio, setSound, sfx } from './audio.js?v=vic2live';
+import { S, persist } from './save.js?v=vic2live';
+import { UI, HUD } from './ui.js?v=vic2live';
+import { closePanel, talk } from './uikit.js?v=vic2live';
+import { Game } from './game.js?v=vic2live';
+import { loadFont } from './text3d.js?v=vic2live';
 const $ = (i) => document.getElementById(i);
 const app = window.__vic = { state: 'boot', paused: true, game: null, ready: false, busy: false };
 function setLoad(p, t) { const b = $('loadBar'); if (b) b.style.width = p + '%'; if (t) $('loadTxt').textContent = t; }
@@ -39,5 +39,5 @@ app.sim = (sec) => { const n = Math.round(sec * 60); for (let i = 0; i < n; i++)
 app.tp = (x, z, yaw) => app.game.tp(x, z, yaw); app.go = (id, from) => app.game.load(id, from); app.S = S; app.E = E;
 boot().catch((e) => { console.error(e); $('loadTxt').textContent = 'Oops: ' + e.message; });
 // screenshot helper: Shadowlight surface detail + flashlight on/off (before/after comparison)
-import { SL as _SL } from './shadowlight/index.js?v=vic1';
-app.slCompare = async (on) => { const m = await import('./shadowlight/index.js?v=vic1'); m.useSurfaceSet(on ? (app.game.zone.Z.kind === 'lab' ? 'lab' : app.game.zone.Z.kind) : '__none'); if (!on) m.setAmt(0); _SL.flashOn = on; _SL.hero.visible = on; _SL.dust.visible = on; _SL.shafts.forEach((s) => s.visible = on); };
+import { SL as _SL } from './shadowlight/index.js?v=vic2live';
+app.slCompare = async (on) => { const m = await import('./shadowlight/index.js?v=vic2live'); m.useSurfaceSet(on ? (app.game.zone.Z.kind === 'lab' ? 'lab' : app.game.zone.Z.kind) : '__none'); if (!on) m.setAmt(0); _SL.flashOn = on; _SL.hero.visible = on; _SL.dust.visible = on; _SL.shafts.forEach((s) => s.visible = on); };

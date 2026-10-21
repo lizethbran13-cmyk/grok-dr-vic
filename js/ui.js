@@ -1,9 +1,9 @@
 // Grok Dr. Vic - menus: title, story cards, clue reader, SpookTube phone, Case Board journal, options, ending.
-import { S, persist, resetSave } from './save.js?v=vic1';
-import { sfx, setSound } from './audio.js?v=vic1';
-import { panel, closePanel, on, toast, talk } from './uikit.js?v=vic1';
-import { ZONES, ORDER, VIRAL, CLUE_ICON, COMMENTS } from './data.js?v=vic1';
-import { fmt, ANAME } from './game.js?v=vic1';
+import { S, persist, resetSave } from './save.js?v=vic2live';
+import { sfx, setSound } from './audio.js?v=vic2live';
+import { panel, closePanel, on, toast, talk } from './uikit.js?v=vic2live';
+import { ZONES, ORDER, VIRAL, CLUE_ICON, COMMENTS } from './data.js?v=vic2live';
+import { fmt, ANAME } from './game.js?v=vic2live';
 const $ = (i) => document.getElementById(i), esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 export function goal() { if (!S.flags.gooTest) return 'Test your newest invention: Ratita Goo 🧪'; if (!S.filmed.h_mess) return 'Tap 📱 and SNAP the living goo mess'; if (!S.clues.h_laptop) return 'Read the UrbEx forum on your laptop 💻';
   if (!S.flags.hedge) return 'Explore Old Town Street. Find the Ratita lab'; if (!S.items.keycard) return 'Explore the lab. Find a way into the basement'; if (!S.clues.b3_fuse && !S.flags.power) return 'Go deeper. Something on B3 powers B4';

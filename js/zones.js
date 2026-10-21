@@ -1,10 +1,10 @@
 // Grok Dr. Vic - zone builders. Every zone is its own World (merged, culled static meshes + colliders) that is built when
 // you enter it and fully disposed when you leave, so only ONE zone is ever in memory (iOS-friendly streaming).
-import * as K from './kit.js?v=vic1';
-import * as A from './art.js?v=vic1';
-import { rbox } from './world.js?v=vic1';
-import { propSeed } from './props.js?v=vic1';
-import { ZONES } from './data.js?v=vic1';
+import * as K from './kit.js?v=vic2live';
+import * as A from './art.js?v=vic2live';
+import { rbox } from './world.js?v=vic2live';
+import { propSeed } from './props.js?v=vic2live';
+import { ZONES } from './data.js?v=vic2live';
 const { rcyl, lathe, sph, cyl, cone, torus, capsule, tube, blobGeo, gear, wedge } = K; const R = K.R, pick = K.pick, PI = Math.PI;
 export const LAB = { x0: -22, x1: 22, z0: -16, z1: 16, cz0: -3, cz1: 3 };
 let C = null; // build context: hazards, spots, keep-out boxes

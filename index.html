@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b0f0a">
+<title>Grok Dr. Vic: The Lost Lab</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css?v=vic1">
+<script type="importmap">
+{ "imports": { "three": "./lib/three.module.min.js", "three/addons/": "./lib/addons/" } }
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="film" class="hidden"><div class="rec">● REC</div><div class="fr tl"></div><div class="fr tr"></div><div class="fr bl"></div><div class="fr br"></div><div class="aim"></div><div class="lockTxt">ANOMALY IN FRAME!</div></div>
+<div id="hud" class="hidden">
+  <div id="hTL"><div id="hArea" class="chip">🏠 Home</div><div id="hGoal"></div></div>
+  <div id="hTR"><div class="chip">👥 <b id="hFol">0</b></div><div class="chip" id="hBatC">🔋 <b id="hBat">100%</b></div><div id="hScan" class="chip hidden"></div></div>
+  <button id="hPause" aria-label="case board">🗂️</button>
+</div>
+<div id="touch" class="hidden">
+  <div id="touchZone"></div><div id="stickRing"></div><div id="stickKnob"></div>
+  <button class="tb" id="tJump" data-b="jump">JUMP</button>
+  <button class="tb" id="tFilm" data-b="film">📱<small>FILM</small></button>
+  <button class="tb hidden" id="tSnap" data-b="snap">📸<small>SNAP</small></button>
+  <button class="hidden" id="tAct" data-b="act"></button>
+</div>
+<div id="dlg"></div>
+<div id="ui"></div>
+<div id="toast"></div>
+<div id="splat"></div><div id="scare"></div><div id="flash"></div><div id="fader"></div>
+<div id="loading"><div class="lg">GROK<br><span>DR. VIC</span></div><div class="bar"><i id="loadBar"></i></div><p id="loadTxt">Loading…</p></div>
+<script type="module" src="js/main.js?v=vic1"></script>
+</body>
+</html>

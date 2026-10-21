@@ -22,7 +22,7 @@ const VIC = { skin: 1, hair: 4, hairC: 1, shirt: 7, pants: 0 };
 export class Game {
   constructor(app) { this.app = app; this.scene = E.scene; this.T = 0; this.fpv = false; this.fpPitch = 0; this.shake = 0; this.fx = new FX(this.scene); initShadowlight();
     this.me = new Walker(VIC); this.dressVic(); this.me.addTo(this.scene); this.cam = new FollowCam(); this.zone = null; this.dyn = new THREE.Group(); this.scene.add(this.dyn); this.goo = 0; this.toastQ = []; }
-  dressVic() { const r = this.me.rig, b = r.body; const coat = stdM(0xf4f6f8, 0.75); const c = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.36, 0.72, 20, 1, true), coat); c.position.set(0, 0.98, 0); c.castShadow = true; b.add(c);
+  dressVic() { const r = this.me.rig, b = r.body; const coat = stdM(0xd8dde4, 0.8); const c = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.36, 0.72, 20, 1, true), coat); c.position.set(0, 0.98, 0); c.castShadow = true; b.add(c);
     const lap = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.4, 0.02), stdM(0xdfe4ea, 0.7)); [-1, 1].forEach((s) => { const l = lap.clone(); l.position.set(s * 0.09, 1.18, 0.29); l.rotation.z = s * 0.25; b.add(l); });
     const pen = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.12, 8), stdM(0x2563eb)); pen.position.set(0.16, 1.24, 0.31); b.add(pen);
     const gg = new THREE.Group(); const gm = stdM(0x3a2a1a, 0.4, 0.3), lm = new THREE.MeshPhysicalMaterial({ color: 0x9dffb0, roughness: 0.05, transmission: 0, transparent: true, opacity: 0.6, emissive: 0x2a7a3a, emissiveIntensity: 0.4 });
@@ -132,7 +132,7 @@ export class Game {
   tp(x, z, yaw = PI) { this.me.place([x, 0.1, z], yaw); this.cam.yaw = yaw + PI; this.cam.snap = true; }
 }
 function propReset() {}
-const LABENV = (Z) => ({ skyTop: 0x050508, skyMid: 0x0a0a10, skyBot: 0x050508, sunDir: [0.3, 1, 0.2], sunColor: Z.cold ? 0xb0d0ff : 0xa0b0c8, sunI: 0.18, hemiSky: Z.cold ? 0x6a8ab0 : 0x5a6a7a, hemiGround: 0x1a1612, hemiI: 0.5, exposure: 1.15, fog: Z.cold ? 0x0e141c : 0x0a0b0a, fogD: 0.03, envI: 0.35, envLight: 0x9ab0c0, envLightI: 1.0, bloomT: 0.8, bloomS: 0.75 });
+const LABENV = (Z) => ({ skyTop: 0x050508, skyMid: 0x0a0a10, skyBot: 0x050508, sunDir: [0.3, 1, 0.2], sunColor: Z.cold ? 0xb0d0ff : 0xa0b0c8, sunI: 0.18, hemiSky: Z.cold ? 0x6a8ab0 : 0x5a6a7a, hemiGround: 0x1a1612, hemiI: 0.7, exposure: 1.1, fog: Z.cold ? 0x0e141c : 0x0a0b0a, fogD: 0.02, envI: 0.35, envLight: 0x9ab0c0, envLightI: 1.0, bloomT: 0.8, bloomS: 0.75 });
 const VERB = { log: 'READ', tape: 'PLAY TAPE', photo: 'LOOK AT PHOTO', blueprint: 'STUDY BLUEPRINT', item: 'PICK UP' };
 export const ANAME = { orb: 'Ghost light', float: 'Floating object', eyes: 'Glowing eyes', blob: 'Living goo', shadow: 'Shadow rat', drip: 'Goo drip', portal: 'Mirror portal', core: 'GOOLIATH' };
 const pickC = () => COMMENTS[(Math.random() * COMMENTS.length) | 0];

@@ -38,3 +38,6 @@ function frame(now) { requestAnimationFrame(frame); const dt = Math.max(0, Math.
 app.sim = (sec) => { const n = Math.round(sec * 60); for (let i = 0; i < n; i++) app.game.update(1 / 60); };
 app.tp = (x, z, yaw) => app.game.tp(x, z, yaw); app.go = (id, from) => app.game.load(id, from); app.S = S; app.E = E;
 boot().catch((e) => { console.error(e); $('loadTxt').textContent = 'Oops: ' + e.message; });
+// screenshot helper: Shadowlight surface detail + flashlight on/off (before/after comparison)
+import { SL as _SL } from './shadowlight/index.js?v=vic1';
+app.slCompare = async (on) => { const m = await import('./shadowlight/index.js?v=vic1'); m.useSurfaceSet(on ? (app.game.zone.Z.kind === 'lab' ? 'lab' : app.game.zone.Z.kind) : '__none'); if (!on) m.setAmt(0); _SL.flashOn = on; _SL.hero.visible = on; _SL.dust.visible = on; _SL.shafts.forEach((s) => s.visible = on); };

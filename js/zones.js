@@ -135,9 +135,9 @@ export function buildLab(w, id) {
     papers(w, r.x0 + 0.8, r.z0 + 0.8, r.x1 - 0.8, r.z1 - 0.8, 10); debris(w, r.x0 + 0.8, r.z0 + 0.8, r.x1 - 0.8, r.z1 - 0.8, 8, Z.cold ? 0xd8e8f0 : 0x8a847a);
     if (Z.rooms[k] !== 'sewer' && R() < 0.6) { const px = r.cx + (R() < 0.5 ? -3 : 3), pz = r.cz + r.f * 3.5; if (keep(px, pz)) puddle(w, px, pz, 0.7); }
     for (const dx of [-3.6, 3.6]) { const x = r.cx + dx, z = r.cz; w.add('x', rbox(1.8, 0.1, 0.5, 0.03), 0x3a3a3a, x, h - 0.08, z); w.add('l', rbox(1.6, 0.05, 0.36, 0.02), Z.cold ? 0xdff4ff : 0xfff0c8, x, h - 0.16, z, 0, 0, 0, 1, 1, 1, 0.2); }
-    C.spots.push({ x: r.cx, y: h - 0.8, z: r.cz, c: Z.cold ? 0xcfe8ff : Z.rooms[k] === 'core' || Z.rooms[k] === 'goo' ? 0x9dffb0 : 0xffe2b0, i: 22, d: 16, shaft: 1, flick: R() < 0.45 ? 1 : 0 });
+    C.spots.push({ x: r.cx, y: h - 0.8, z: r.cz, c: Z.cold ? 0xcfe8ff : Z.rooms[k] === 'core' || Z.rooms[k] === 'goo' ? 0x9dffb0 : 0xffe2b0, i: 18, d: 18, shaft: 1, flick: R() < 0.45 ? 1 : 0 });
     // room sign over the door (corridor side)
-    A.txt(w, ROOMN[Z.rooms[k]] || 'ROOM', r.cx - 1.1, 3.35, dz - f * 0.3, f < 0 ? PI : 0, 0.22, 0xe8e0c8);
+    { const nm = ROOMN[Z.rooms[k]] || 'ROOM', hw = nm.length * 0.085; A.txt(w, nm, r.cx + (f < 0 ? -hw : hw), 3.35, dz - f * 0.3, f < 0 ? 0 : PI, 0.22, 0xe8e0c8); }
   }
   // corridor: pipes along the ceiling, wall lamps, hazard stripes, debris, signs
   C.keep = [[-20.5, -1.5, 20.5, 1.5]];

@@ -33,7 +33,8 @@ export function initShadowlight() { for (const k of ['m', 'w', 'x', 'g', 'f']) i
   for (let i = 0; i < 5; i++) { const p = new THREE.PointLight(0xffffff, 0, 16, 1.6); E.scene.add(p); SL.lights.push(p); }
   // dust motes: one Points cloud that wraps around the camera
   const n = 900, pos = new Float32Array(n * 3); for (let i = 0; i < n * 3; i++) pos[i] = (Math.random() - 0.5) * 16; const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  SL.dust = new THREE.Points(g, new THREE.PointsMaterial({ color: 0xfff4dc, size: 0.035, transparent: true, opacity: 0.55, depthWrite: false, sizeAttenuation: true })); SL.dust.frustumCulled = false; E.scene.add(SL.dust);
+  const dc = document.createElement('canvas'); dc.width = dc.height = 32; const dx = dc.getContext('2d'), gr = dx.createRadialGradient(16, 16, 0, 16, 16, 16); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); dx.fillStyle = gr; dx.fillRect(0, 0, 32, 32);
+  SL.dust = new THREE.Points(g, new THREE.PointsMaterial({ map: new THREE.CanvasTexture(dc), color: 0xfff4dc, size: 0.028, transparent: true, opacity: 0.55, depthWrite: false, sizeAttenuation: true })); SL.dust.frustumCulled = false; E.scene.add(SL.dust);
   SL.shaftMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, uniforms: { c: { value: new THREE.Color(0xffe8c0) }, a: { value: 0.12 }, t: { value: 0 } },
     vertexShader: 'varying vec2 vU; varying vec3 vN; varying vec3 vV; void main(){ vU = uv; vec4 mv = modelViewMatrix * vec4(position,1.0); vN = normalize(normalMatrix*normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }',
     fragmentShader: 'uniform vec3 c; uniform float a; uniform float t; varying vec2 vU; varying vec3 vN; varying vec3 vV; void main(){ float rim = pow(abs(dot(vN, vV)), 1.5); float fall = pow(vU.y, 1.6); float wob = 0.85 + 0.15*sin(t*1.3 + vU.x*12.0); gl_FragColor = vec4(c * a * rim * fall * wob, 1.0); }' });
@@ -54,3 +55,4 @@ export function updateShadowlight(dt, me, cam, o = {}) { SL.t += dt; const t = S
   // dust: keep motes in a 16 m box around the camera, drifting
   const P = SL.dust.geometry.attributes.position, a = P.array, cx = cam.position.x, cy = cam.position.y, cz = cam.position.z; for (let i = 0; i < a.length; i += 3) { a[i] += Math.sin(t * 0.3 + i) * dt * 0.08; a[i + 1] -= dt * 0.03; a[i + 2] += Math.cos(t * 0.27 + i) * dt * 0.08;
     let dx = a[i] - cx, dy = a[i + 1] - cy, dz = a[i + 2] - cz; if (dx > 8) a[i] -= 16; else if (dx < -8) a[i] += 16; if (dy > 6) a[i + 1] -= 12; else if (dy < -6) a[i + 1] += 12; if (dz > 8) a[i + 2] -= 16; else if (dz < -8) a[i + 2] += 16; } P.needsUpdate = true; SL.dust.material.opacity = o.dust ?? 0.5; }
+export function setAmt(a) { for (const k in U) U[k].uAmt.value = a; }

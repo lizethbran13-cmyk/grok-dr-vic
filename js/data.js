@@ -105,7 +105,9 @@ export const ZONES = {
     pets: [{ id: 'luna', at: 'corr', x: 8, z: 1.3, lines: [['Luna', 'Dr. Vic, this is it. Gooliath is in the two Core rooms. Get the proof, then hit POST THE TRUTH on your phone.'], ['Luna', 'Our great-great-great-grandparents were not innocent at all. But we can fix it. Together.']] },
       { id: 'pirat', at: 'corr', x: 10, z: -1.3, lines: [['Pi-rat', 'Arr, I\'ve got me one good eye on the door. If Grimsby shows up, he\'s not getting past!']] }, { id: 'snowie', at: 'corr', x: 12.5, z: 1.3, lines: [['Snowie', 'Eep! Code 1-9-0-3 is ready for the shut-off panel. You can do it!']] }] },
 };
+import { SUNK, SUNK_ORDER, ownsSunken } from './sunken.js?v=vic3mp';
 export const ORDER = ['home', 'street', 'lab1', 'lab2', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11'];
+Object.assign(ZONES, SUNK); if (ownsSunken()) ORDER.push(...SUNK_ORDER); // MEGA DLC #57: The Sunken Lab
 // clues + anomalies of the hand-built zones
 ZONES.home.clues = [{ id: 'h_laptop', x: 5.2, z: -4.6, y: 1.0, kind: 'log', title: 'UrbEx forum post', text: '"OLD TOWN STREET: abandoned 22 years ago after a \'gas leak\'. Nobody goes there. People say the drains glow green at night and cheese goes missing." Dr. Vic: "THIS is how I go viral."' }];
 ZONES.home.anoms = [];

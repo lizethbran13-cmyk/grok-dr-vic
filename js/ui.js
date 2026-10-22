@@ -1,9 +1,9 @@
 // Grok Dr. Vic - menus: title, story cards, clue reader, SpookTube phone, Case Board journal, options, ending.
-import { S, persist, resetSave } from './save.js?v=vic2live';
-import { sfx, setSound } from './audio.js?v=vic2live';
-import { panel, closePanel, on, toast, talk } from './uikit.js?v=vic2live';
-import { ZONES, ORDER, VIRAL, CLUE_ICON, COMMENTS } from './data.js?v=vic2live';
-import { fmt, ANAME } from './game.js?v=vic2live';
+import { S, persist, resetSave } from './save.js?v=vic3mp';
+import { sfx, setSound } from './audio.js?v=vic3mp';
+import { panel, closePanel, on, toast, talk } from './uikit.js?v=vic3mp';
+import { ZONES, ORDER, VIRAL, CLUE_ICON, COMMENTS } from './data.js?v=vic3mp';
+import { fmt, ANAME } from './game.js?v=vic3mp';
 const $ = (i) => document.getElementById(i), esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 export function goal() { if (!S.flags.gooTest) return 'Test your newest invention: Ratita Goo 🧪'; if (!S.filmed.h_mess) return 'Tap 📱 and SNAP the living goo mess'; if (!S.clues.h_laptop) return 'Read the UrbEx forum on your laptop 💻';
   if (!S.flags.hedge) return 'Explore Old Town Street. Find the Ratita lab'; if (!S.items.keycard) return 'Explore the lab. Find a way into the basement'; if (!S.clues.b3_fuse && !S.flags.power) return 'Go deeper. Something on B3 powers B4';
@@ -12,9 +12,9 @@ export class UI {
   constructor(app) { this.app = app; }
   title() { const ui = $('ui'); ui.classList.add('open'); const cont = S.seenIntro; ui.innerHTML = `<div class="title vic"><div class="logo"><span class="l0">GROK</span><span class="l1">DR. VIC</span><span class="l2">THE LOST LAB</span></div>
     <p class="tag">A down-on-his-luck scientist. An abandoned street. A secret Ratita Industries lab with 2 floors and 11 levels underground. Film the weird stuff, piece together the truth... and go VIRAL.</p>
-    <div class="tBtns"><button class="go" id="tPlay">▶ ${cont ? 'CONTINUE' : 'NEW GAME'}</button>${cont ? '<button class="mbtn2" id="tNew">🆕 NEW GAME</button>' : ''}<button class="mbtn2" id="tOpts">⚙️ OPTIONS</button></div>
+    <div class="tBtns"><button class="go" id="tPlay">▶ ${cont ? 'CONTINUE' : 'NEW GAME'}</button>${cont ? '<button class="mbtn2" id="tNew">🆕 NEW GAME</button>' : ''}<button class="mbtn2" id="tMP">🌐 PLAY WITH FRIENDS</button><button class="mbtn2" id="tOpts">⚙️ OPTIONS</button></div>
     <p class="foot">👥 ${fmt(S.followers)} followers · Shadowlight engine · Luna, Pi-rat, Snowie, Candy & Torty</p></div>`;
-    on(ui, '#tPlay', () => this.app.play()); on(ui, '#tNew', () => { if (confirm('Start over? Your Dr. Vic save will be erased.')) { resetSave(); this.app.play(); } }); on(ui, '#tOpts', () => this.options(() => this.title())); }
+    on(ui, '#tPlay', () => this.app.play()); on(ui, '#tNew', () => { if (confirm('Start over? Your Dr. Vic save will be erased.')) { resetSave(); this.app.play(); } }); on(ui, '#tOpts', () => this.options(() => this.title())); on(ui, '#tMP', () => this.app.mp.lobby(() => this.title())); }
   story(done) { const cards = [['📉', 'Meet Dr. Victor "Vic". Brilliant scientist. Terrible luck. 46 inventions... 46 failures.'], ['🧪', 'Tonight he tests invention #47: RATITA GOO, made to clean up rat pee and poop. This one HAS to work.'], ['📱', 'If it fails too? Vic has a backup plan: exploring abandoned places for his tiny SpookTube channel. 37 followers. He needs to go VIRAL.']]; let i = 0;
     const show = () => { const [ic, t] = cards[i]; panel(`<div class="card"><div class="cIc">${ic}</div><p>${t}</p><button class="go" id="cNext">${i < cards.length - 1 ? 'NEXT ▶' : 'START ▶'}</button></div>`, (c) => on(c, '#cNext', () => { i++; if (i < cards.length) show(); else { closePanel(); done(); } })); }; show(); }
   clue(c, done) { this.app.busy = true; panel(`<div class="clue"><div class="cIc">${CLUE_ICON[c.kind]}</div><h2>${esc(c.title)}</h2><p>${esc(c.text)}</p><small>Added to your 🗂️ Case Board</small><button class="go" id="cOk">GOT IT</button></div>`, (p) => on(p, '#cOk', () => { closePanel(); this.app.busy = false; done && done(); })); }
@@ -22,8 +22,8 @@ export class UI {
   pause() { const g = this.app.game; const tot = ORDER.reduce((n, z) => n + (ZONES[z].clues || []).length, 0), got = Object.keys(S.clues).length;
     const zones = ORDER.filter((z) => (ZONES[z].clues || []).length && (S.flags['seen_' + z] || z === 'home')).map((z) => `<h3>${esc(ZONES[z].name)}</h3>${ZONES[z].clues.map((c) => S.clues[c.id] ? `<div class="cl"><b>${CLUE_ICON[c.kind]} ${esc(c.title)}</b><p>${esc(c.text)}</p></div>` : '<div class="cl lock">❓ Not found yet</div>').join('')}`).join('');
     panel(`<h2>🗂️ CASE BOARD</h2><div class="prog"><i style="width:${Math.round(got / tot * 100)}%"></i></div><p class="sm">${got}/${tot} clues · The truth is ${Math.round(got / tot * 100)}% pieced together</p>
-      <div class="tabs"><button class="mbtn2" id="pRes">▶ RESUME</button><button class="mbtn2" id="pPhone">📱 SPOOKTUBE</button><button class="mbtn2" id="pOpt">⚙️</button><button class="mbtn2" id="pTitle">🏠</button></div><div class="scroll">${zones}</div>`, (c) => {
-      on(c, '#pRes', () => this.app.resume()); on(c, '#pPhone', () => this.phone()); on(c, '#pOpt', () => this.options(() => this.pause())); on(c, '#pTitle', () => { persist(); this.app.toTitle(); }); }); }
+      <div class="tabs"><button class="mbtn2" id="pRes">▶ RESUME</button><button class="mbtn2" id="pPhone">📱 SPOOKTUBE</button><button class="mbtn2" id="pMP">🌐${this.app.mp.online ? ' ' + this.app.mp.room.code : ''}</button><button class="mbtn2" id="pOpt">⚙️</button><button class="mbtn2" id="pTitle">🏠</button></div><div class="scroll">${zones}</div>`, (c) => {
+      on(c, '#pRes', () => this.app.resume()); on(c, '#pPhone', () => this.phone()); on(c, '#pMP', () => this.app.mp.lobby(() => this.pause())); on(c, '#pOpt', () => this.options(() => this.pause())); on(c, '#pTitle', () => { persist(); this.app.toTitle(); }); }); }
   phone() { const p = S.posts.slice(0, 14).map((q) => `<div class="post ${q.f < 0 ? 'neg' : ''}"><b>${esc(q.t)}</b><span>${q.f >= 0 ? '+' : ''}${fmt(q.f)}</span><i>💬 ${esc(q.c)}</i></div>`).join('') || '<p class="sm">No posts yet. Go film something spooky!</p>';
     const pct = Math.min(100, Math.log10(Math.max(10, S.followers)) / Math.log10(VIRAL) * 100);
     panel(`<div class="phoneUI"><div class="ptop">▶ SpookTube · Dr. Vic Explores</div><div class="pfol">👥 ${fmt(S.followers)}</div><div class="prog"><i style="width:${pct}%"></i></div><p class="sm">${S.won ? '🎉 VIRAL! 1M+ followers' : 'Road to VIRAL: ' + fmt(VIRAL)}</p>

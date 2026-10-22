@@ -1,19 +1,19 @@
 // Grok Dr. Vic: The Lost Lab - runtime: zone streaming, Dr. Vic on foot, pets, clues, anomalies, filming + followers, hazards and the story.
 import * as THREE from 'three';
-import { E, setEnvironment, followShadow } from './engine.js?v=vic2live';
-import { World, clearWorldCaches } from './world.js?v=vic2live';
-import { Walker } from './walker.js?v=vic2live';
-import { FollowCam } from './cam.js?v=vic2live';
-import { makePet, animPet } from './pets.js?v=vic2live';
-import { readMove, edge, IN } from './input.js?v=vic2live';
-import { disposeDeep } from './perf.js?v=vic2live';
-import { S, persist } from './save.js?v=vic2live';
-import { sfx, playMusic } from './audio.js?v=vic2live';
-import { talk, talking, toast } from './uikit.js?v=vic2live';
-import { FX } from './fx.js?v=vic2live';
-import { ZONES, VIRAL, COMMENTS, CLUE_ICON } from './data.js?v=vic2live';
-import { buildLab, buildHome, buildStreet, LAB } from './zones.js?v=vic2live';
-import { initShadowlight, useSurfaceSet, setSpots, updateShadowlight, SL } from './shadowlight/index.js?v=vic2live';
+import { E, setEnvironment, followShadow } from './engine.js?v=vic3mp';
+import { World, clearWorldCaches } from './world.js?v=vic3mp';
+import { Walker } from './walker.js?v=vic3mp';
+import { FollowCam } from './cam.js?v=vic3mp';
+import { makePet, animPet } from './pets.js?v=vic3mp';
+import { readMove, edge, IN } from './input.js?v=vic3mp';
+import { disposeDeep } from './perf.js?v=vic3mp';
+import { S, persist } from './save.js?v=vic3mp';
+import { sfx, playMusic } from './audio.js?v=vic3mp';
+import { talk, talking, toast } from './uikit.js?v=vic3mp';
+import { FX } from './fx.js?v=vic3mp';
+import { ZONES, VIRAL, COMMENTS, CLUE_ICON } from './data.js?v=vic3mp';
+import { buildLab, buildHome, buildStreet, LAB } from './zones.js?v=vic3mp';
+import { initShadowlight, useSurfaceSet, setSpots, updateShadowlight, SL } from './shadowlight/index.js?v=vic3mp';
 const PI = Math.PI, $ = (i) => document.getElementById(i);
 export const fmt = (n) => n >= 1e6 ? (n / 1e6).toFixed(2) + 'M' : n >= 1e4 ? (n / 1e3).toFixed(1) + 'K' : String(Math.round(n));
 const glowM = (c, o = 1) => new THREE.MeshBasicMaterial({ color: c, toneMapped: false, transparent: o < 1, opacity: o, depthWrite: o >= 1 });
@@ -89,8 +89,12 @@ export class Game {
     const pm = new THREE.MeshPhysicalMaterial({ color: 0x3fdc5a, roughness: 0.05, clearcoat: 1, emissive: 0x1f8a2a, emissiveIntensity: 0.6 }); for (const [px, pz, s] of [[-1.2, 0.5, 0.9], [-4.6, 1.6, 0.8], [-2.4, -3.6, 0.7], [0.8, -1.8, 0.6]]) { const p = new THREE.Mesh(new THREE.CircleGeometry(1, 28), pm); p.rotation.x = -PI / 2; p.position.set(px, 0.11, pz); p.scale.set(s, s * 0.8, 1); p.receiveShadow = true; this.dyn.add(p); this.zone.haz.push({ x: px, z: pz, r: s * 0.8 }); }
     const a = { id: 'h_mess', x: -2.2, z: -0.2, y: 0, type: 'blob', fol: 25 }; const o = makeAnom('blob'); o.position.set(a.x, 0, a.z); this.dyn.add(o); this.zone.anoms.push({ a, o, x: a.x, y: 0, z: a.z, t: 0, popT: 0, cd: 0, filmed: false });
     setTimeout(() => this.app.talk([['Dr. Vic', 'KA-SPLOOSH!! ...My Ratita Goo was supposed to clean up rat pee and poop. Instead it exploded EVERYWHERE.'], ['Dr. Vic', 'Invention #47: total failure. Again. And that goo is wobbling around on its own...'], ['📱 SpookTube', 'TIP: Tap 📱 to raise your phone, aim at something weird, then tap 📸 SNAP. Interesting shots = new followers. Blurry/boring shots = unfollows!'], ['📱 SpookTube', 'Careful: stepping in goo too long makes you slip, and spooks make you drop your phone. Recharge at ⚡ spots.']]), 1400); persist(); }
-  readClue(cl) { const c = cl.c; S.clues[c.id] = 1; if (c.kind === 'item') S.items[c.id] = 1; sfx('part'); this.dyn.remove(cl.g); disposeDeep(cl.g); this.zone.clues.splice(this.zone.clues.indexOf(cl), 1);
+  readClue(cl) { const c = cl.c; this.app.mp && this.app.mp.event({ c: 'clue', id: c.id }); S.clues[c.id] = 1; if (c.kind === 'item') S.items[c.id] = 1; sfx('part'); this.dyn.remove(cl.g); disposeDeep(cl.g); this.zone.clues.splice(this.zone.clues.indexOf(cl), 1);
     const fol = Math.round(Math.max(8, S.followers * 0.04)); this.app.clue(c, () => { this.post('New clue: ' + c.title, fol, false); if (c.id === 'keycard') toast('🔑 The basement door on Floor 1 will open now'); }); persist(); }
+  // co-op: a friend found a clue, so it's solved for the whole team (it vanishes here too and goes on your Case Board)
+  friendClue(id, who) { if (S.clues[id]) return; let c = null; for (const z in ZONES) for (const q of ZONES[z].clues || []) if (q.id === id) c = q; if (!c) return; S.clues[id] = 1; if (c.kind === 'item') S.items[id] = 1;
+    const cl = this.zone && this.zone.clues.find((q) => q.c.id === id); if (cl) { this.fx.confetti ? this.fx.confetti(cl.x, cl.y, cl.z, 30) : 0; this.dyn.remove(cl.g); disposeDeep(cl.g); this.zone.clues.splice(this.zone.clues.indexOf(cl), 1); }
+    sfx('part'); toast(`🔎 ${who} found a clue: ${c.title}! (on your Case Board)`); if (id === 'keycard') toast('🔑 The basement door on Floor 1 will open now'); persist(); }
   post(title, fol, big) { const before = S.followers; S.followers = Math.max(0, Math.round(S.followers + fol)); S.posts.unshift({ t: title, f: Math.round(fol), c: pickC(), at: Date.now() }); S.posts = S.posts.slice(0, 40); this.app.hud.bump(S.followers - before); persist(); }
   // ------------------------------------------------------------------ filming
   toggleFilm(on = !this.fpv) { if (on && S.battery <= 0) { sfx('deny'); return toast('🔋 Battery dead! Charge at a ⚡ spot.'); } this.fpv = on; this.fpPitch = 0; this.me.setVisible(!on); $('film').classList.toggle('hidden', !on); $('tSnap').classList.toggle('hidden', !on); this.cam.snap = true; if (on) sfx('click'); }
